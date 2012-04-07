@@ -1,15 +1,16 @@
 class SessionsController < ApplicationController
   def create
-  auth = request.env['rack.auth']
-  unless @auth = Authorization.find_from_hash(auth)
-    # Create a new user or add an auth to existing user, depending on
-    # whether there is already a user signed in.
-    @auth = Authorization.create_from_hash(auth, current_user)
+    auth = request.env["omniauth.auth"]
+    user = User.find_by_provider_and_uid(auth["provider"], auth["uid"]) || User.create_with_omniauth(auth)
+    session[:user_id] = user.id
+    redirect_to root_url, :notice => "Signed in!"
   end
-  # Log the authorizing user in.
-  self.current_user = @auth.user
+  def destroy
+    session[:user_id] = nil
+    redirect_to root_url, :notice => "Signed out!"
+  end
 
-  render :text => "Welcome, #{current_user.name}."
+
 end
-end
+
 
