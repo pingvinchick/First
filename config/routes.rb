@@ -1,7 +1,7 @@
 Vk1::Application.routes.draw do
   get "landing/index"
 
-  root :to => "landing#index"
+  #root :to => "landing#index"
   match '/auth/:provider/callback', :to => 'sessions#create'
   match "/signout" => "sessions#destroy", :as => :signout
   # The priority is based upon order of creation:
